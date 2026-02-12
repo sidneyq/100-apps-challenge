@@ -1,18 +1,20 @@
 # 100 Apps Challenge
 
 ## Overview
-Placeholder project for a 100 apps vibecoding challenge using Replit and Claude Code. Technologies mentioned: React/Next.js, Python, Jira, Pine Script.
+Multi-app project for a 100 apps vibecoding challenge using Replit and Claude Code.
 
 ## Current State
-Static landing page served via Python's built-in HTTP server on port 5000.
+Currently serving `apps/003-move-countdown` — a family move countdown timer to July 31, 2026 (Bay Area move).
 
 ## Project Architecture
-- `index.html` — Static landing page
-- `server.py` — Simple Python HTTP server (port 5000, host 0.0.0.0, no-cache headers)
+- `index.html` — Root landing page
+- `server.py` — Python HTTP server (port 5000, host 0.0.0.0, no-cache headers), serves the active app directory
+- `apps/003-move-countdown/index.html` — Move countdown app (plain HTML/CSS/JS)
 - `.gitignore` — Python-focused gitignore
 
 ## Running
-The project runs via the "Start application" workflow which executes `python server.py`.
+The project runs via the "Start application" workflow which executes `python server.py`. The server currently serves from `apps/003-move-countdown`.
 
 ## User Preferences
-None recorded yet.
+- Prefers plain HTML/CSS/JS for simple apps
+- Apps are organized under `apps/` directory with numbered naming convention

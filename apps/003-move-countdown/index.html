@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Move Countdown - Bay Area</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+      color: #fff;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+
+    .header h1 {
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      background: linear-gradient(90deg, #f9d423, #ff4e50);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .header p {
+      font-size: 1.1rem;
+      color: #a0c4d8;
+    }
+
+    .countdown {
+      display: flex;
+      gap: 2rem;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .countdown-item {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 1rem;
+      padding: 2rem 2.5rem;
+      text-align: center;
+      min-width: 140px;
+      backdrop-filter: blur(10px);
+      transition: transform 0.2s ease;
+    }
+
+    .countdown-item:hover {
+      transform: translateY(-4px);
+    }
+
+    .countdown-item .number {
+      font-size: 4rem;
+      font-weight: 800;
+      line-height: 1;
+      margin-bottom: 0.5rem;
+    }
+
+    .countdown-item:nth-child(1) .number { color: #f9d423; }
+    .countdown-item:nth-child(2) .number { color: #ff9a3c; }
+    .countdown-item:nth-child(3) .number { color: #ff4e50; }
+
+    .countdown-item .label {
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: #a0c4d8;
+    }
+
+    .move-date {
+      margin-top: 3rem;
+      text-align: center;
+      color: #6b9ab5;
+      font-size: 0.95rem;
+    }
+
+    .move-date strong {
+      color: #a0c4d8;
+    }
+
+    .arrived {
+      text-align: center;
+    }
+
+    .arrived h2 {
+      font-size: 3rem;
+      background: linear-gradient(90deg, #f9d423, #ff4e50);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 1rem;
+    }
+
+    .arrived p {
+      font-size: 1.2rem;
+      color: #a0c4d8;
+    }
+
+    @media (max-width: 500px) {
+      .header h1 { font-size: 1.8rem; }
+      .countdown { gap: 1rem; }
+      .countdown-item {
+        padding: 1.5rem 1.8rem;
+        min-width: 100px;
+      }
+      .countdown-item .number { font-size: 3rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>Bay Area, Here We Come!</h1>
+    <p>Family move countdown</p>
+  </div>
+
+  <div id="countdown" class="countdown"></div>
+
+  <div class="move-date">
+    Moving day: <strong>July 31, 2026</strong>
+  </div>
+
+  <script>
+    const MOVE_DATE = new Date(2026, 6, 31);
+
+    function calculateCountdown() {
+      const now = new Date();
+      now.setHours(0, 0, 0, 0);
+
+      if (now >= MOVE_DATE) {
+        return null;
+      }
+
+      let months = 0;
+      let cursor = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
+      while (true) {
+        const next = new Date(cursor.getFullYear(), cursor.getMonth() + 1, cursor.getDate());
+        if (next > MOVE_DATE) break;
+        if (next.getMonth() !== (cursor.getMonth() + 1) % 12) {
+          const lastDay = new Date(cursor.getFullYear(), cursor.getMonth() + 2, 0);
+          if (lastDay > MOVE_DATE) break;
+          cursor = lastDay;
+        } else {
+          cursor = next;
+        }
+        months++;
+      }
+
+      const remainingMs = MOVE_DATE - cursor;
+      const remainingDays = Math.round(remainingMs / (1000 * 60 * 60 * 24));
+      const weeks = Math.floor(remainingDays / 7);
+      const days = remainingDays % 7;
+
+      return { months, weeks, days };
+    }
+
+    function render() {
+      const container = document.getElementById('countdown');
+      const result = calculateCountdown();
+
+      if (!result) {
+        container.innerHTML = '';
+        container.className = 'arrived';
+        container.innerHTML = `
+          <h2>Welcome to the Bay Area!</h2>
+          <p>The big move is here. Enjoy your new home!</p>
+        `;
+        return;
+      }
+
+      container.innerHTML = `
+        <div class="countdown-item">
+          <div class="number">${result.months}</div>
+          <div class="label">${result.months === 1 ? 'Month' : 'Months'}</div>
+        </div>
+        <div class="countdown-item">
+          <div class="number">${result.weeks}</div>
+          <div class="label">${result.weeks === 1 ? 'Week' : 'Weeks'}</div>
+        </div>
+        <div class="countdown-item">
+          <div class="number">${result.days}</div>
+          <div class="label">${result.days === 1 ? 'Day' : 'Days'}</div>
+        </div>
+      `;
+    }
+
+    render();
+    setInterval(render, 60000);
+  </script>
+</body>
+</html>
