@@ -15,7 +15,7 @@ Building 100 apps using AI-assisted development (vibecoding) to learn full-stack
 | --- | ---------------------- | -------------- | ------ | ---- | ------------ |
 | 001 | Unit Converter         | Python/Flask   | ⬜     | —    | —            |
 | 002 | Tip Calculator         | Python/Flask   | ⬜     | —    | —            |
-| 003 | Move Countdown         | Python/Flask   | ⬜     | —    | —            |
+| 003 | Move Countdown         | Python/Flask   | ✅     | —    | https://move-countdown.replit.app            |
 | 004 | Password Generator     | Python/Flask   | ⬜     | —    | —            |
 | 005 | Flashcard App          | Python/Flask   | ⬜     | —    | —            |
 | 006 | Pomodoro Timer         | Python/Flask   | ⬜     | —    | —            |
