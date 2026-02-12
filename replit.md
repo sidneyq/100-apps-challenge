@@ -9,7 +9,7 @@ Currently serving `apps/003-move-countdown` — a family move countdown timer to
 ## Project Architecture
 - `index.html` — Root landing page
 - `server.py` — Python HTTP server (port 5000, host 0.0.0.0, no-cache headers), serves the active app directory
-- `apps/003-move-countdown/index.html` — Move countdown app (plain HTML/CSS/JS)
+- `apps/003-move-countdown/index.html` — Move countdown app (plain HTML/CSS/JS) with milestone tracker (checkable items, localStorage persistence, collapsible groups, progress bar)
 - `.gitignore` — Python-focused gitignore
 
 ## Running

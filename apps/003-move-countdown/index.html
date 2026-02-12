@@ -15,13 +15,13 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
       padding: 2rem;
     }
 
     .header {
       text-align: center;
       margin-bottom: 3rem;
+      margin-top: 2rem;
     }
 
     .header h1 {
@@ -166,6 +166,167 @@
       color: #a0c4d8;
     }
 
+    .milestones-section {
+      margin-top: 3rem;
+      width: 100%;
+      max-width: 700px;
+    }
+
+    .milestones-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.5rem;
+    }
+
+    .milestones-header h2 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #a0c4d8;
+    }
+
+    .progress-summary {
+      font-size: 0.85rem;
+      color: #6b9ab5;
+      background: rgba(255,255,255,0.06);
+      padding: 0.4rem 0.9rem;
+      border-radius: 2rem;
+    }
+
+    .progress-summary strong {
+      color: #f9d423;
+    }
+
+    .progress-bar-container {
+      width: 100%;
+      height: 6px;
+      background: rgba(255,255,255,0.08);
+      border-radius: 3px;
+      margin-bottom: 2rem;
+      overflow: hidden;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #f9d423, #ff4e50);
+      border-radius: 3px;
+      transition: width 0.4s ease;
+    }
+
+    .milestone-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .milestone-group-header {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      cursor: pointer;
+      padding: 0.7rem 1rem;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 0.75rem;
+      margin-bottom: 0.5rem;
+      transition: background 0.2s;
+      user-select: none;
+    }
+
+    .milestone-group-header:hover {
+      background: rgba(255,255,255,0.1);
+    }
+
+    .milestone-group-header .group-icon {
+      font-size: 1.1rem;
+      width: 1.5rem;
+      text-align: center;
+    }
+
+    .milestone-group-header .group-title {
+      font-size: 1rem;
+      font-weight: 600;
+      color: #c8dce6;
+      flex: 1;
+    }
+
+    .milestone-group-header .group-count {
+      font-size: 0.75rem;
+      color: #6b9ab5;
+      background: rgba(255,255,255,0.06);
+      padding: 0.2rem 0.6rem;
+      border-radius: 1rem;
+    }
+
+    .milestone-group-header .chevron {
+      color: #6b9ab5;
+      font-size: 0.7rem;
+      transition: transform 0.2s;
+    }
+
+    .milestone-group.collapsed .chevron {
+      transform: rotate(-90deg);
+    }
+
+    .milestone-group.collapsed .milestone-list {
+      display: none;
+    }
+
+    .milestone-list {
+      padding: 0.25rem 0 0.25rem 0;
+    }
+
+    .milestone-item {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.6rem 1rem 0.6rem 1.2rem;
+      border-radius: 0.5rem;
+      cursor: pointer;
+      transition: background 0.15s;
+      user-select: none;
+      position: relative;
+      z-index: 1;
+    }
+
+    .milestone-item:hover {
+      background: rgba(255,255,255,0.04);
+    }
+
+    .milestone-item .checkbox {
+      width: 20px;
+      height: 20px;
+      border: 2px solid rgba(255,255,255,0.25);
+      border-radius: 5px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+    }
+
+    .milestone-item.checked .checkbox {
+      background: linear-gradient(135deg, #f9d423, #ff9a3c);
+      border-color: transparent;
+    }
+
+    .milestone-item.checked .checkbox::after {
+      content: '\2713';
+      color: #1a1a2e;
+      font-size: 0.75rem;
+      font-weight: 800;
+    }
+
+    .milestone-item .milestone-text {
+      font-size: 0.9rem;
+      color: #c8dce6;
+      line-height: 1.4;
+      transition: all 0.2s;
+    }
+
+    .milestone-item.checked .milestone-text {
+      color: #5a7a8a;
+      text-decoration: line-through;
+    }
+
     @media (max-width: 500px) {
       .header h1 { font-size: 1.8rem; }
       .countdown-main { gap: 1rem; }
@@ -176,6 +337,8 @@
       .countdown-item .number { font-size: 2.8rem; }
       .flip-card .flip-number { font-size: 1.2rem; }
       .flip-card { min-width: 40px; padding: 0.4rem 0.5rem; }
+      .milestones-section { padding: 0 0.5rem; }
+      .milestones-header { flex-direction: column; gap: 0.5rem; align-items: flex-start; }
     }
   </style>
 </head>
@@ -192,8 +355,196 @@
     Moving day: <strong>July 31, 2026</strong>
   </div>
 
+  <div class="milestones-section">
+    <div class="milestones-header">
+      <h2>Moving Milestones</h2>
+      <div class="progress-summary" id="progress-summary"></div>
+    </div>
+    <div class="progress-bar-container">
+      <div class="progress-bar-fill" id="progress-bar"></div>
+    </div>
+    <div id="milestones-container"></div>
+  </div>
+
   <script>
     const MOVE_DATE = new Date(2026, 6, 31);
+    const STORAGE_KEY = 'move-milestones-checked';
+
+    const MILESTONES = [
+      {
+        group: 'Early Planning (6+ months out)',
+        icon: '\uD83D\uDCCB',
+        items: [
+          'Research schools & enrollment deadlines for teens',
+          'Start visa / immigration paperwork',
+          'Notify current school about withdrawal',
+          'Begin decluttering \u2014 teens sort their own rooms',
+          'Research neighborhoods & housing options in Bay Area',
+          'Create a moving budget'
+        ]
+      },
+      {
+        group: '3\u20135 Months Before',
+        icon: '\uD83D\uDCE6',
+        items: [
+          'Enroll teens in new school (transcripts & records transfer)',
+          'Get international health / vaccination records',
+          'Book moving company or shipping container',
+          'Set up bank account in new country',
+          'Research teen activities (sports clubs, music, etc.)',
+          'Start saying goodbye \u2014 plan farewell gatherings',
+          'Sell or donate furniture you won\u2019t bring'
+        ]
+      },
+      {
+        group: '1\u20132 Months Before',
+        icon: '\u2708\uFE0F',
+        items: [
+          'Cancel or transfer subscriptions & memberships',
+          'Forward mail & update address everywhere',
+          'Teens pack their personal boxes',
+          'Book flights & temporary housing if needed',
+          'Arrange pet transport (if applicable)',
+          'Back up all important digital files & photos'
+        ]
+      },
+      {
+        group: 'Final Weeks',
+        icon: '\uD83C\uDFE0',
+        items: [
+          'Confirm flights & accommodation for arrival',
+          'Final school day \u2014 pick up records & say goodbye',
+          'Pack suitcases (essentials for the first week)',
+          'Deep clean & hand over old home',
+          'Set up phone plans for new country',
+          'Prepare travel documents folder (passports, visas, school records)'
+        ]
+      },
+      {
+        group: 'After Arrival',
+        icon: '\uD83C\uDF1F',
+        items: [
+          'First day at new school',
+          'Get local IDs / driver\u2019s permits (if applicable)',
+          'Explore the new neighborhood together',
+          'Register with local doctor & dentist',
+          'Set up internet, utilities & essentials at new home',
+          'Find local hangout spots for teens'
+        ]
+      }
+    ];
+
+    function loadChecked() {
+      try {
+        const data = localStorage.getItem(STORAGE_KEY);
+        return data ? JSON.parse(data) : {};
+      } catch (e) {
+        return {};
+      }
+    }
+
+    function saveChecked(checked) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(checked));
+    }
+
+    function getMilestoneKey(groupIdx, itemIdx) {
+      return `${groupIdx}-${itemIdx}`;
+    }
+
+    function getTotalAndCompleted(checked) {
+      let total = 0;
+      let completed = 0;
+      MILESTONES.forEach((group, gi) => {
+        group.items.forEach((_, ii) => {
+          total++;
+          if (checked[getMilestoneKey(gi, ii)]) completed++;
+        });
+      });
+      return { total, completed };
+    }
+
+    function renderMilestones() {
+      const container = document.getElementById('milestones-container');
+      const checked = loadChecked();
+      const { total, completed } = getTotalAndCompleted(checked);
+
+      document.getElementById('progress-summary').innerHTML =
+        `<strong>${completed}</strong> / ${total} done`;
+      document.getElementById('progress-bar').style.width =
+        `${total > 0 ? (completed / total * 100) : 0}%`;
+
+      container.innerHTML = MILESTONES.map((group, gi) => {
+        const groupCompleted = group.items.filter((_, ii) => checked[getMilestoneKey(gi, ii)]).length;
+
+        return `
+          <div class="milestone-group" id="group-${gi}">
+            <div class="milestone-group-header" onclick="toggleGroup(${gi})">
+              <span class="group-icon">${group.icon}</span>
+              <span class="group-title">${group.group}</span>
+              <span class="group-count">${groupCompleted}/${group.items.length}</span>
+              <span class="chevron">\u25BC</span>
+            </div>
+            <div class="milestone-list">
+              ${group.items.map((item, ii) => {
+                const key = getMilestoneKey(gi, ii);
+                const isChecked = checked[key];
+                return `
+                  <div class="milestone-item ${isChecked ? 'checked' : ''}" onclick="event.stopPropagation(); toggleItem(${gi}, ${ii})">
+                    <div class="checkbox"></div>
+                    <span class="milestone-text">${item}</span>
+                  </div>
+                `;
+              }).join('')}
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      const collapsed = loadCollapsed();
+      Object.keys(collapsed).forEach(gi => {
+        if (collapsed[gi]) {
+          const el = document.getElementById(`group-${gi}`);
+          if (el) el.classList.add('collapsed');
+        }
+      });
+    }
+
+    function toggleItem(gi, ii) {
+      const checked = loadChecked();
+      const key = getMilestoneKey(gi, ii);
+      checked[key] = !checked[key];
+      if (!checked[key]) delete checked[key];
+      saveChecked(checked);
+      renderMilestones();
+    }
+
+    const COLLAPSED_KEY = 'move-milestones-collapsed';
+
+    function loadCollapsed() {
+      try {
+        const data = localStorage.getItem(COLLAPSED_KEY);
+        return data ? JSON.parse(data) : {};
+      } catch (e) {
+        return {};
+      }
+    }
+
+    function saveCollapsed(collapsed) {
+      localStorage.setItem(COLLAPSED_KEY, JSON.stringify(collapsed));
+    }
+
+    function toggleGroup(gi) {
+      const el = document.getElementById(`group-${gi}`);
+      const collapsed = loadCollapsed();
+      if (el.classList.contains('collapsed')) {
+        el.classList.remove('collapsed');
+        delete collapsed[gi];
+      } else {
+        el.classList.add('collapsed');
+        collapsed[gi] = true;
+      }
+      saveCollapsed(collapsed);
+    }
 
     function pad(n) {
       return String(n).padStart(2, '0');
@@ -287,6 +638,7 @@
 
     render();
     setInterval(render, 1000);
+    renderMilestones();
   </script>
 </body>
 </html>
