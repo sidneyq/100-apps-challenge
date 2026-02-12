@@ -38,7 +38,7 @@
       color: #a0c4d8;
     }
 
-    .countdown {
+    .countdown-main {
       display: flex;
       gap: 2rem;
       flex-wrap: wrap;
@@ -49,9 +49,9 @@
       background: rgba(255, 255, 255, 0.08);
       border: 1px solid rgba(255, 255, 255, 0.12);
       border-radius: 1rem;
-      padding: 1.5rem 2rem;
+      padding: 2rem 2.5rem;
       text-align: center;
-      min-width: 120px;
+      min-width: 140px;
       backdrop-filter: blur(10px);
       transition: transform 0.2s ease;
     }
@@ -61,7 +61,7 @@
     }
 
     .countdown-item .number {
-      font-size: 3.2rem;
+      font-size: 3.5rem;
       font-weight: 800;
       line-height: 1;
       margin-bottom: 0.5rem;
@@ -70,15 +70,72 @@
     .countdown-item:nth-child(1) .number { color: #f9d423; }
     .countdown-item:nth-child(2) .number { color: #ff9a3c; }
     .countdown-item:nth-child(3) .number { color: #ff4e50; }
-    .countdown-item:nth-child(4) .number { color: #e84393; }
-    .countdown-item:nth-child(5) .number { color: #a29bfe; }
-    .countdown-item:nth-child(6) .number { color: #74b9ff; }
 
     .countdown-item .label {
       font-size: 0.9rem;
       text-transform: uppercase;
       letter-spacing: 2px;
       color: #a0c4d8;
+    }
+
+    .clock-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.25rem;
+      margin-top: 1.5rem;
+    }
+
+    .flip-card {
+      background: #2a2a2e;
+      border-radius: 0.5rem;
+      padding: 0.5rem 0.75rem;
+      text-align: center;
+      min-width: 50px;
+      position: relative;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.05);
+      overflow: hidden;
+    }
+
+    .flip-card::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 50%;
+      height: 1px;
+      background: rgba(0, 0, 0, 0.4);
+      z-index: 2;
+    }
+
+    .flip-card .flip-number {
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: #e0e0e0;
+      line-height: 1.2;
+      font-family: 'SF Mono', 'Menlo', 'Consolas', monospace;
+      position: relative;
+      z-index: 1;
+    }
+
+    .flip-card .flip-label {
+      font-size: 0.55rem;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: #888;
+      margin-top: 0.2rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    .clock-separator {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: #666;
+      padding: 0 0.15rem;
+      line-height: 1;
+      align-self: center;
+      margin-bottom: 0.8rem;
     }
 
     .move-date {
@@ -111,12 +168,14 @@
 
     @media (max-width: 500px) {
       .header h1 { font-size: 1.8rem; }
-      .countdown { gap: 1rem; }
+      .countdown-main { gap: 1rem; }
       .countdown-item {
         padding: 1.5rem 1.8rem;
         min-width: 100px;
       }
-      .countdown-item .number { font-size: 3rem; }
+      .countdown-item .number { font-size: 2.8rem; }
+      .flip-card .flip-number { font-size: 1.2rem; }
+      .flip-card { min-width: 40px; padding: 0.4rem 0.5rem; }
     }
   </style>
 </head>
@@ -126,7 +185,8 @@
     <p>Family move countdown</p>
   </div>
 
-  <div id="countdown" class="countdown"></div>
+  <div id="countdown-main" class="countdown-main"></div>
+  <div id="countdown-clock" class="clock-row"></div>
 
   <div class="move-date">
     Moving day: <strong>July 31, 2026</strong>
@@ -134,6 +194,10 @@
 
   <script>
     const MOVE_DATE = new Date(2026, 6, 31);
+
+    function pad(n) {
+      return String(n).padStart(2, '0');
+    }
 
     function calculateCountdown() {
       const now = new Date();
@@ -159,7 +223,6 @@
       }
 
       const remainingMs = MOVE_DATE - now;
-      const totalDays = Math.floor(remainingMs / (1000 * 60 * 60 * 24));
       const daysAfterMonths = Math.floor((MOVE_DATE - cursor) / (1000 * 60 * 60 * 24));
       const weeks = Math.floor(daysAfterMonths / 7);
       const days = daysAfterMonths % 7;
@@ -174,20 +237,22 @@
     }
 
     function render() {
-      const container = document.getElementById('countdown');
+      const mainContainer = document.getElementById('countdown-main');
+      const clockContainer = document.getElementById('countdown-clock');
       const result = calculateCountdown();
 
       if (!result) {
-        container.innerHTML = '';
-        container.className = 'arrived';
-        container.innerHTML = `
+        mainContainer.innerHTML = '';
+        clockContainer.innerHTML = '';
+        mainContainer.className = 'arrived';
+        mainContainer.innerHTML = `
           <h2>Welcome to the Bay Area!</h2>
           <p>The big move is here. Enjoy your new home!</p>
         `;
         return;
       }
 
-      container.innerHTML = `
+      mainContainer.innerHTML = `
         <div class="countdown-item">
           <div class="number">${result.months}</div>
           <div class="label">${result.months === 1 ? 'Month' : 'Months'}</div>
@@ -200,17 +265,22 @@
           <div class="number">${result.days}</div>
           <div class="label">${result.days === 1 ? 'Day' : 'Days'}</div>
         </div>
-        <div class="countdown-item">
-          <div class="number">${result.hours}</div>
-          <div class="label">${result.hours === 1 ? 'Hour' : 'Hours'}</div>
+      `;
+
+      clockContainer.innerHTML = `
+        <div class="flip-card">
+          <div class="flip-number">${pad(result.hours)}</div>
+          <div class="flip-label">Hours</div>
         </div>
-        <div class="countdown-item">
-          <div class="number">${result.minutes}</div>
-          <div class="label">${result.minutes === 1 ? 'Minute' : 'Minutes'}</div>
+        <div class="clock-separator">:</div>
+        <div class="flip-card">
+          <div class="flip-number">${pad(result.minutes)}</div>
+          <div class="flip-label">Min</div>
         </div>
-        <div class="countdown-item">
-          <div class="number">${result.seconds}</div>
-          <div class="label">${result.seconds === 1 ? 'Second' : 'Seconds'}</div>
+        <div class="clock-separator">:</div>
+        <div class="flip-card">
+          <div class="flip-number">${pad(result.seconds)}</div>
+          <div class="flip-label">Sec</div>
         </div>
       `;
     }
