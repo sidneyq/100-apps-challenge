@@ -49,9 +49,9 @@
       background: rgba(255, 255, 255, 0.08);
       border: 1px solid rgba(255, 255, 255, 0.12);
       border-radius: 1rem;
-      padding: 2rem 2.5rem;
+      padding: 1.5rem 2rem;
       text-align: center;
-      min-width: 140px;
+      min-width: 120px;
       backdrop-filter: blur(10px);
       transition: transform 0.2s ease;
     }
@@ -61,7 +61,7 @@
     }
 
     .countdown-item .number {
-      font-size: 4rem;
+      font-size: 3.2rem;
       font-weight: 800;
       line-height: 1;
       margin-bottom: 0.5rem;
@@ -70,6 +70,9 @@
     .countdown-item:nth-child(1) .number { color: #f9d423; }
     .countdown-item:nth-child(2) .number { color: #ff9a3c; }
     .countdown-item:nth-child(3) .number { color: #ff4e50; }
+    .countdown-item:nth-child(4) .number { color: #e84393; }
+    .countdown-item:nth-child(5) .number { color: #a29bfe; }
+    .countdown-item:nth-child(6) .number { color: #74b9ff; }
 
     .countdown-item .label {
       font-size: 0.9rem;
@@ -134,7 +137,6 @@
 
     function calculateCountdown() {
       const now = new Date();
-      now.setHours(0, 0, 0, 0);
 
       if (now >= MOVE_DATE) {
         return null;
@@ -156,12 +158,19 @@
         months++;
       }
 
-      const remainingMs = MOVE_DATE - cursor;
-      const remainingDays = Math.round(remainingMs / (1000 * 60 * 60 * 24));
-      const weeks = Math.floor(remainingDays / 7);
-      const days = remainingDays % 7;
+      const remainingMs = MOVE_DATE - now;
+      const totalDays = Math.floor(remainingMs / (1000 * 60 * 60 * 24));
+      const daysAfterMonths = Math.floor((MOVE_DATE - cursor) / (1000 * 60 * 60 * 24));
+      const weeks = Math.floor(daysAfterMonths / 7);
+      const days = daysAfterMonths % 7;
 
-      return { months, weeks, days };
+      const dayMs = 1000 * 60 * 60 * 24;
+      const subDayMs = remainingMs % dayMs;
+      const hours = Math.floor(subDayMs / (1000 * 60 * 60));
+      const minutes = Math.floor((subDayMs % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((subDayMs % (1000 * 60)) / 1000);
+
+      return { months, weeks, days, hours, minutes, seconds };
     }
 
     function render() {
@@ -191,11 +200,23 @@
           <div class="number">${result.days}</div>
           <div class="label">${result.days === 1 ? 'Day' : 'Days'}</div>
         </div>
+        <div class="countdown-item">
+          <div class="number">${result.hours}</div>
+          <div class="label">${result.hours === 1 ? 'Hour' : 'Hours'}</div>
+        </div>
+        <div class="countdown-item">
+          <div class="number">${result.minutes}</div>
+          <div class="label">${result.minutes === 1 ? 'Minute' : 'Minutes'}</div>
+        </div>
+        <div class="countdown-item">
+          <div class="number">${result.seconds}</div>
+          <div class="label">${result.seconds === 1 ? 'Second' : 'Seconds'}</div>
+        </div>
       `;
     }
 
     render();
-    setInterval(render, 60000);
+    setInterval(render, 1000);
   </script>
 </body>
 </html>
