@@ -4,7 +4,7 @@ import os
 
 PORT = 5000
 HOST = "0.0.0.0"
-DIRECTORY = os.path.join(os.path.dirname(os.path.abspath(__file__)), "apps", "003-move-countdown")
+DIRECTORY = os.path.join(os.path.dirname(os.path.abspath(__file__)), "apps", "004-password-generator")
 
 class NoCacheHandler(http.server.SimpleHTTPRequestHandler):
     def __init__(self, *args, **kwargs):

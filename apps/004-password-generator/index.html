@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Password Generator & Strength Checker</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <h1>Password Generator</h1>
+
+    <div class="card">
+      <h2>Generate a Password</h2>
+
+      <div class="form-group">
+        <label for="length">Password Length</label>
+        <input type="number" id="length" min="4" max="128" value="16">
+      </div>
+
+      <div class="form-group">
+        <label>Character Set</label>
+        <div class="radio-group">
+          <label class="radio-label">
+            <input type="radio" name="charset" value="alpha" checked>
+            <span class="radio-custom"></span>
+            Alphabetic only (a-z, A-Z, 0-9)
+          </label>
+          <label class="radio-label">
+            <input type="radio" name="charset" value="special">
+            <span class="radio-custom"></span>
+            Alphabetic + Special characters (#, !, $, @, %, &amp;, *)
+          </label>
+        </div>
+      </div>
+
+      <button id="generateBtn" class="btn">Generate</button>
+
+      <div id="result" class="result hidden">
+        <span id="generatedPassword"></span>
+        <button id="copyBtn" class="btn-copy" title="Copy to clipboard">Copy</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Check Password Strength</h2>
+
+      <div class="form-group">
+        <label for="checkPassword">Enter a Password</label>
+        <div class="password-input-wrap">
+          <input type="password" id="checkPassword" placeholder="Type a password to check...">
+          <button id="toggleVisibility" class="btn-toggle" title="Show/Hide password">Show</button>
+        </div>
+      </div>
+
+      <div id="strengthResult" class="strength-result hidden">
+        <div class="strength-bar-bg">
+          <div id="strengthBar" class="strength-bar"></div>
+        </div>
+        <p id="strengthLabel" class="strength-label"></p>
+        <ul id="strengthDetails" class="strength-details"></ul>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

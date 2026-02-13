@@ -4,7 +4,7 @@
 Multi-app project for a 100 apps vibecoding challenge using Replit and Claude Code.
 
 ## Current State
-Currently serving `apps/003-move-countdown` — a family move countdown timer to July 31, 2026 (Bay Area move).
+Currently serving `apps/004-password-generator` — a password generator and strength checker app.
 
 ## Project Architecture
 - `index.html` — Root landing page
